@@ -38,6 +38,7 @@ def is_similar(image1, image2):
 
 
 def remove_duplicates():
+    duplicate_list = []
     for category in index.keys():
         print category, '...'
         visited = []
@@ -55,6 +56,11 @@ def remove_duplicates():
                 im2 = cv2.imread(filecmp)
                 if is_similar(im1, im2):
                     print filein, '\n', filecmp, '\n'
+                    duplicate_list.append()
+
+    # for duplicate in duplicate_list:
+    #     os.remove(duplicate)
+    # print 'Deleted {} duplicates!!!'.format(len(duplicate_list))
 
 
 # rename_dataset()
