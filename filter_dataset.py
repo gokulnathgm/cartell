@@ -1,7 +1,8 @@
+import numpy as np
 import os
+import re
 
 import cv2
-import numpy as np
 
 index = {'mahindra_tuv': 1, 'honda_wrv': 2, 'toyota_yaris': 3, 'mahindra_xuv': 4, 'suzuki_alto': 5,
          'mahindra_scorpio': 6, 'tata_tiago': 7, 'tata_hexa': 8, 'suzuki_ciaz': 9, 'suzuki_baleno': 10,
@@ -10,18 +11,38 @@ index = {'mahindra_tuv': 1, 'honda_wrv': 2, 'toyota_yaris': 3, 'mahindra_xuv': 4
 
 directory_path = os.getcwd() + '/training_images/'
 
+_nsre = re.compile('([0-9]+)')
+
+
+def natural_sort_key(s):
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split(_nsre, s)]
+
+
+def find_last_count(string):
+    digit = ''
+    for char in string:
+        if char.isdigit():
+            digit += char
+    return int(digit) + 1
+
 
 def rename_dataset():
     renamed_count = 0
     for category in index.keys():
         category_path = directory_path + category
-        count = 0
-        for filename in os.listdir(category_path):
-            if filename.startswith(category):
+        files = os.listdir(category_path)
+        files.sort(key=natural_sort_key)
+        last_name = files[-1]
+        count = find_last_count(last_name)
+        name = category.split('_')[1]
+        maxlen = len(name) + 8
+        for filename in files:
+            if filename.startswith(name) and len(filename) < maxlen:
                 continue
             while True:
-                new_name = category + '_' + str(count)
-                if new_name not in os.listdir(category_path):
+                new_name = name + str(count)
+                if new_name not in files:
                     count += 1
                     break
                 count += 1
@@ -58,11 +79,11 @@ def remove_duplicates():
                     print filein, '\n', filecmp, '\n'
                     duplicate_list.append()
 
-    # for duplicate in duplicate_list:
-    #     os.remove(duplicate)
-    # print 'Deleted {} duplicates!!!'.format(len(duplicate_list))
+                    # for duplicate in duplicate_list:
+                    #     os.remove(duplicate)
+                    # print 'Deleted {} duplicates!!!'.format(len(duplicate_list))
 
 
-# rename_dataset()
+rename_dataset()
 
-remove_duplicates()
+# remove_duplicates()
