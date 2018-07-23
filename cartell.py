@@ -94,6 +94,7 @@ if __name__ == "__main__":
             break
         time.sleep(1)
     # time.sleep(4)
+    iteration_name = 'iteration-' + str(iteration)
 
     problem_set = problem_set(base_url, headers)
     if problem_set != -1:
@@ -115,16 +116,17 @@ if __name__ == "__main__":
         problem_details = problem_response['problem']
         problem_title = problem_details['title'].encode('utf-8')
         problem_description = problem_details['description'].encode('utf-8')
+        ext = problem_description.split('.')[-1]
 
-        image_name = "{}.jpg".format(problem_id)
-        image_path = 'test_images/' + image_name
+        image_name = "{}.{}".format(problem_id, ext)
+        image_path = iteration_name + '/' + image_name
         try:
             urllib.urlretrieve(problem_description, image_path)
         except Exception as e:
             logger.write('Error while fetching url: ' + problem_description + '\n')
 
     cwd = os.getcwd()
-    files = os.listdir(cwd + '/test_images')
+    files = os.listdir(cwd + '/' + iteration_name)
 
     problem_count = 1
     for image in files:
@@ -135,11 +137,12 @@ if __name__ == "__main__":
         --labels=output/output_labels.txt \
         --input_layer=Placeholder \
         --output_layer=final_result \
-        --image=test_images/{}".format(image)
+        --image={}/{}".format(iteration_name, image)
 
         status, result = commands.getstatusoutput(command)
         result_list = result.split('\n')
 
+        #TODO Modify the format according to the new result
         for result in result_list:
             if result.startswith(index):
                 brand = result.split(' ')

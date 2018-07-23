@@ -1,8 +1,8 @@
-import numpy as np
 import os
 import re
 
 import cv2
+import numpy as np
 
 index = {'mahindra_tuv': 1, 'honda_wrv': 2, 'toyota_yaris': 3, 'mahindra_xuv': 4, 'suzuki_alto': 5,
          'mahindra_scorpio': 6, 'tata_tiago': 7, 'tata_hexa': 8, 'suzuki_ciaz': 9, 'suzuki_baleno': 10,
@@ -47,7 +47,8 @@ def rename_dataset():
                     break
                 count += 1
             filename = category_path + '/' + filename
-            new_name = category_path + '/' + new_name + '.jpg'
+            extension = filename.split('.')[-1]
+            new_name = category_path + '/' + new_name + '.' + extension
             os.rename(filename, new_name)
             print 'Renamed', filename, 'to', new_name
             renamed_count += 1
@@ -84,6 +85,19 @@ def remove_duplicates():
                     # print 'Deleted {} duplicates!!!'.format(len(duplicate_list))
 
 
-rename_dataset()
+def remove_non_image():
+    extensions = ['jpg', 'png']
+    for category in index.keys():
+        category_path = directory_path + category
+        files = os.listdir(category_path)
+        for file in files:
+            extension = file.split('.')[-1]
+            if extension not in extensions:
+                os.remove(category_path + '/' + file)
+                print 'Deleted... ', category_path + '/' + file
+
+# rename_dataset()
 
 # remove_duplicates()
+
+# remove_non_image()
